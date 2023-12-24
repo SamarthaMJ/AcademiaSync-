@@ -4,8 +4,6 @@ from flask import Flask, render_template, request, jsonify
 from b2sdk.v1 import *
 import socket
 import pandas as pd
-import time
-import schedule
 
 
 def is_connected():
