@@ -53,7 +53,7 @@ global formatted_test1, formatted_test2, formatted_midterm, formatted_final
 
 @app.route('/')
 def index():
-    return render_template('new_index_1.html')
+    return render_template('new_index.html')
 
 
 @app.route('/process', methods=['POST'])
