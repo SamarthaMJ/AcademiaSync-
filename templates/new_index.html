@@ -1,110 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Student Dashboard</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .options {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4285f4;
+      color: #fff;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #357ae8;
+    }
+
+    #datepicker {
+      width: 200px;
+      padding: 8px;
+      margin-top: 10px;
+    }
+
+    #data-display {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
+
 <body>
 
-<div>
-  <button class="class11">Class 11</button>
-  <button class="class12">Class 12</button>
-</div>
+  <div class="container">
+    <h1>Student Dashboard</h1>
 
-<div style="display: none;" class="student-id-input">
-  <label for="student-id">Enter Student ID:</label>
-  <input type="text" id="student-id">
-  <button id="submit-id">Submit</button>
-</div>
+    <div>
+      <button class="class11">Class 11</button>
+      <button class="class12">Class 12</button>
+    </div>
 
-<div style="display: none;" class="options">
-  <!-- Datepicker initially hidden -->
-  <div style="display: none;" class="datepicker-section">
-    <h3>Select Date:</h3>
-    <input type="text" id="datepicker">
+    <div style="display: none;" class="student-id-input">
+      <label for="student-id">Enter Student ID:</label>
+      <input type="text" id="student-id">
+      <button id="submit-id">Submit</button>
+    </div>
+
+    <div style="display: none;" class="options">
+      <!-- Datepicker initially hidden -->
+      <div style="display: none;" class="datepicker-section">
+        <h3>Select Date:</h3>
+        <input type="text" id="datepicker">
+      </div>
+
+      <h3>View:</h3>
+      <button class="view-attendance">View Attendance</button>
+      <button class="view-test1">View Test1 Marks</button>
+      <button class="view-test2">View Test2 Marks</button>
+      <button class="view-midterm">View Midterm Marks</button>
+      <button class="view-final">View Final Exam Marks</button>
+    </div>
+
+    <!-- Data display section -->
+    <div id="data-display">
+      <!-- Fetched data will be displayed here -->
+    </div>
   </div>
 
-  <h3>View:</h3>
-  <button class="view-attendance">View Attendance</button>
-  <button class="view-test1">View Test1 Marks</button>
-  <button class="view-test2">View Test2 Marks</button>
-  <button class="view-midterm">View Midterm Marks</button>
-  <button class="view-final">View Final Exam Marks</button>
-</div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      let selectedButton = '';
+      let selectedDate = '';
 
-<!-- Data display section -->
-<div id="data-display">
-  <!-- Fetched data will be displayed here -->
-</div>
+      $('.class11, .class12').click(function() {
+        selectedButton = $(this).text();
+        $('.student-id-input').show();
+      });
 
-<script>
-  $(document).ready(function() {
-    let selectedButton = '';
-    let selectedDate = '';
+      $('#submit-id').click(function() {
+        const studentID = $('#student-id').val();
+        $('.student-id-input').hide();
+        $('.options').show();
+      });
 
-    $('.class11, .class12').click(function() {
-      selectedButton = $(this).text();
-      $('.student-id-input').show();
-    });
+      // Showing datepicker only when 'View Attendance' button is clicked
+      $('.view-attendance').click(function() {
+        $('.datepicker-section').show();
+      });
 
-    $('#submit-id').click(function() {
-      const studentID = $('#student-id').val();
-      $('.student-id-input').hide();
-      $('.options').show();
-    });
-
-    // Showing datepicker only when 'View Attendance' button is clicked
-    $('.view-attendance').click(function() {
-      $('.datepicker-section').show();
-    });
-
-    // Datepicker initialization
-    $('#datepicker').datepicker({
-      onSelect: function(dateText) {
-        selectedDate = dateText;
-      }
-    });
-
-    // Sending data to the server on button click
-    $('.view-attendance, .view-test1, .view-test2, .view-midterm, .view-final').click(function() {
-      const selectedOption = $(this).text();
-      sendToServer(selectedButton, $('#student-id').val(), selectedOption, selectedDate);
-    });
-
-    function sendToServer(button, studentID, selectedOption, date) {
-      $.ajax({
-        type: 'POST',
-        url: '/process',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          button: button,
-          studentID: studentID,
-          selectedOption: selectedOption,
-          selectedDate: date // Adding the selected date
-        }),
-        success: function(response) {
-          // Construct the HTML table with titles and fetched data
-          let htmlContent = `<h2>${selectedOption} Table</h2>`;
-          if (response.data === undefined || response.data.trim() === '') {
-            htmlContent += '<p>No data found</p>';
-          } else {
-            if (selectedOption === 'View Attendance' && date) {
-              htmlContent += `<h3>Attendance Date: ${date}</h3>`;
-            }
-            htmlContent += response.data;
-          }
-          $('#data-display').html(htmlContent); // Display fetched data with titles
-        },
-        error: function(err) {
-          console.error('Error:', err);
+      // Datepicker initialization
+      $('#datepicker').datepicker({
+        onSelect: function(dateText) {
+          selectedDate = dateText;
         }
       });
-    }
-  });
-</script>
+
+      // Sending data to the server on button click
+      $('.view-attendance, .view-test1, .view-test2, .view-midterm, .view-final').click(function() {
+        const selectedOption = $(this).text();
+        sendToServer(selectedButton, $('#student-id').val(), selectedOption, selectedDate);
+      });
+
+      function sendToServer(button, studentID, selectedOption, date) {
+        $.ajax({
+          type: 'POST',
+          url: '/process',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            button: button,
+            studentID: studentID,
+            selectedOption: selectedOption,
+            selectedDate: date // Adding the selected date
+          }),
+          success: function(response) {
+            // Construct the HTML table with titles and fetched data
+            let htmlContent = `<h2>${selectedOption} Table</h2>`;
+            if (response.data === undefined || response.data.trim() === '') {
+              htmlContent += '<p>No data found</p>';
+            } else {
+              if (selectedOption === 'View Attendance' && date) {
+                htmlContent += `<h3>Attendance Date: ${date}</h3>`;
+              }
+              htmlContent += response.data;
+            }
+            $('#data-display').html(htmlContent); // Display fetched data with titles
+          },
+          error: function(err) {
+            console.error('Error:', err);
+          }
+        });
+      }
+    });
+  </script>
 
 </body>
+
 </html>
