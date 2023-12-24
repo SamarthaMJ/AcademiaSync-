@@ -5,6 +5,8 @@ from b2sdk.v1 import *
 import socket
 import pandas as pd
 import time
+import schedule
+
 
 def is_connected():
     try:
@@ -40,12 +42,13 @@ else:
 bucket_name = 'sqlite3-data'
 file_name = 'Database_2.db'  # Replace with the file you want to download
 
-def download_from_backblaze():
-    # Your code for downloading from Backblaze B2
-    bucket = b2_api.get_bucket_by_name(bucket_name)
-    download_dest = DownloadDestLocalFile(local_save_path)
-    bucket.download_file_by_name(file_name, download_dest)
-    print("Downloaded database")
+
+# Your code for downloading from Backblaze B2
+bucket = b2_api.get_bucket_by_name(bucket_name)
+download_dest = DownloadDestLocalFile(local_save_path)
+bucket.download_file_by_name(file_name, download_dest)
+print("Downloaded database")
+
 
 app = Flask(__name__)
 
@@ -54,7 +57,7 @@ global formatted_test1, formatted_test2, formatted_midterm, formatted_final
 
 @app.route('/')
 def index():
-    return render_template('new_index.html')
+    return render_template('new_index_1.html')
 
 
 @app.route('/process', methods=['POST'])
@@ -68,6 +71,8 @@ def process():
 
     # Format class button names
     if selected_button in ['Class 11', 'Class 12']:
+        bucket.download_file_by_name(file_name, download_dest)
+        print("Downloading latest database")
         selected_button = selected_button.replace(' ', '_')
 
     # Check if selected_date is empty or not provided
@@ -88,7 +93,7 @@ def process():
         'selectedOption': selected_option,
         'selectedDate': formatted_date,
         'data': None  # Placeholder for retrieved data
-        }
+    }
 
     if selected_option == 'View Attendance':
         conn = sqlite3.connect(local_save_path)
@@ -145,12 +150,10 @@ def process():
     # Print selected options
     # print(f"Button: {selected_button}, Student ID: {student_id}, Selected Option: {selected_option}, Selected Date: {formatted_date}")
 
-
- # Render the HTML template and pass the data
+    # Render the HTML template and pass the data
     return jsonify(data_to_render)
 
 
 if __name__ == '__main__':
-    download_from_backblaze()
-    time.sleep(600)  # 600 seconds = 10 minutes
     app.run(debug=True)
+
