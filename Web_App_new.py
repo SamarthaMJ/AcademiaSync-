@@ -69,8 +69,6 @@ def process():
 
     # Format class button names
     if selected_button in ['Class 11', 'Class 12']:
-        bucket.download_file_by_name(file_name, download_dest)
-        print("Downloading latest database")
         selected_button = selected_button.replace(' ', '_')
 
     # Check if selected_date is empty or not provided
