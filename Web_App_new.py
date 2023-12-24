@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify
 from b2sdk.v1 import *
 import socket
 import pandas as pd
-
+import time
 
 def is_connected():
     try:
@@ -40,11 +40,12 @@ else:
 bucket_name = 'sqlite3-data'
 file_name = 'Database_2.db'  # Replace with the file you want to download
 
-# Download file from Backblaze B2
-bucket = b2_api.get_bucket_by_name(bucket_name)
-download_dest = DownloadDestLocalFile(local_save_path)  # Specify the local path to save the file
-bucket.download_file_by_name(file_name, download_dest)
-print("Downloaded database")
+def download_from_backblaze():
+    # Your code for downloading from Backblaze B2
+    bucket = b2_api.get_bucket_by_name(bucket_name)
+    download_dest = DownloadDestLocalFile(local_save_path)
+    bucket.download_file_by_name(file_name, download_dest)
+    print("Downloaded database")
 
 app = Flask(__name__)
 
@@ -150,4 +151,6 @@ def process():
 
 
 if __name__ == '__main__':
+    download_from_backblaze()
+    time.sleep(600)  # 600 seconds = 10 minutes
     app.run(debug=True)
