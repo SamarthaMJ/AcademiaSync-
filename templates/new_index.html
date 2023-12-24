@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+
+<div>
+  <button class="class11">Class 11</button>
+  <button class="class12">Class 12</button>
+</div>
+
+<div style="display: none;" class="student-id-input">
+  <label for="student-id">Enter Student ID:</label>
+  <input type="text" id="student-id">
+  <button id="submit-id">Submit</button>
+</div>
+
+<div style="display: none;" class="options">
+  <!-- Datepicker initially hidden -->
+  <div style="display: none;" class="datepicker-section">
+    <h3>Select Date:</h3>
+    <input type="text" id="datepicker">
+  </div>
+
+  <h3>View:</h3>
+  <button class="view-attendance">View Attendance</button>
+  <button class="view-test1">View Test1 Marks</button>
+  <button class="view-test2">View Test2 Marks</button>
+  <button class="view-midterm">View Midterm Marks</button>
+  <button class="view-final">View Final Exam Marks</button>
+</div>
+
+<!-- Data display section -->
+<div id="data-display">
+  <!-- Fetched data will be displayed here -->
+</div>
+
+<script>
+  $(document).ready(function() {
+    let selectedButton = '';
+    let selectedDate = '';
+
+    $('.class11, .class12').click(function() {
+      selectedButton = $(this).text();
+      $('.student-id-input').show();
+    });
+
+    $('#submit-id').click(function() {
+      const studentID = $('#student-id').val();
+      $('.student-id-input').hide();
+      $('.options').show();
+    });
+
+    // Showing datepicker only when 'View Attendance' button is clicked
+    $('.view-attendance').click(function() {
+      $('.datepicker-section').show();
+    });
+
+    // Datepicker initialization
+    $('#datepicker').datepicker({
+      onSelect: function(dateText) {
+        selectedDate = dateText;
+      }
+    });
+
+    // Sending data to the server on button click
+    $('.view-attendance, .view-test1, .view-test2, .view-midterm, .view-final').click(function() {
+      const selectedOption = $(this).text();
+      sendToServer(selectedButton, $('#student-id').val(), selectedOption, selectedDate);
+    });
+
+    function sendToServer(button, studentID, selectedOption, date) {
+      $.ajax({
+        type: 'POST',
+        url: '/process',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          button: button,
+          studentID: studentID,
+          selectedOption: selectedOption,
+          selectedDate: date // Adding the selected date
+        }),
+        success: function(response) {
+          // Construct the HTML table with titles and fetched data
+          let htmlContent = `<h2>${selectedOption} Table</h2>`;
+          if (response.data === undefined || response.data.trim() === '') {
+            htmlContent += '<p>No data found</p>';
+          } else {
+            if (selectedOption === 'View Attendance' && date) {
+              htmlContent += `<h3>Attendance Date: ${date}</h3>`;
+            }
+            htmlContent += response.data;
+          }
+          $('#data-display').html(htmlContent); // Display fetched data with titles
+        },
+        error: function(err) {
+          console.error('Error:', err);
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
