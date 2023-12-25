@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Student Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <style>
     body {
@@ -28,7 +29,24 @@
       color: #333;
     }
 
-    /* Button Styling */
+    .options {
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
     button {
       padding: 10px 20px;
       margin: 5px;
@@ -37,42 +55,54 @@
       cursor: pointer;
       background-color: #4285f4;
       color: #fff;
-      transition: background-color 0.3s, transform 0.3s;
-      font-size: 16px;
+      transition: background-color 0.3s;
     }
 
     button:hover {
       background-color: #357ae8;
-      transform: scale(1.05);
     }
 
-    .class11 {
-      background-color: #4caf50;
+    #datepicker {
+      width: 200px;
+      padding: 8px;
+      margin-top: 10px;
     }
 
-    .class12 {
-      background-color: #f44336;
+    #data-display {
+      margin-top: 20px;
     }
 
-    /* Your existing styles here */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-    /* Media Query for Mobile Devices */
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* Adjustments for smaller screens */
     @media screen and (max-width: 600px) {
       .container {
+        width: 90%;
         padding: 10px;
       }
-      h1 {
-        font-size: 24px;
-      }
       input[type="text"] {
-        width: calc(100% - 20px);
-      }
-      button {
-        width: calc(50% - 10px);
-        margin: 5px 0;
+        width: 90%;
+        padding: 8px;
+        margin-bottom: 10px;
       }
       #datepicker {
-        width: calc(100% - 20px);
+        width: 80%;
+        padding: 8px;
+        margin-top: 10px;
       }
     }
   </style>
@@ -95,7 +125,6 @@
     </div>
 
     <div style="display: none;" class="options">
-      <!-- Datepicker initially hidden -->
       <div style="display: none;" class="datepicker-section">
         <h3>Select Date:</h3>
         <input type="text" id="datepicker">
@@ -109,9 +138,7 @@
       <button class="view-final">View Final Exam Marks</button>
     </div>
 
-    <!-- Data display section -->
     <div id="data-display">
-      <!-- Fetched data will be displayed here -->
     </div>
   </div>
 
@@ -133,19 +160,16 @@
         $('.options').show();
       });
 
-      // Showing datepicker only when 'View Attendance' button is clicked
       $('.view-attendance').click(function() {
         $('.datepicker-section').show();
       });
 
-      // Datepicker initialization
       $('#datepicker').datepicker({
         onSelect: function(dateText) {
           selectedDate = dateText;
         }
       });
 
-      // Sending data to the server on button click
       $('.view-attendance, .view-test1, .view-test2, .view-midterm, .view-final').click(function() {
         const selectedOption = $(this).text();
         sendToServer(selectedButton, $('#student-id').val(), selectedOption, selectedDate);
@@ -160,10 +184,9 @@
             button: button,
             studentID: studentID,
             selectedOption: selectedOption,
-            selectedDate: date // Adding the selected date
+            selectedDate: date
           }),
           success: function(response) {
-            // Construct the HTML table with titles and fetched data
             let htmlContent = `<h2>${selectedOption} Table</h2>`;
             if (response.data === undefined || response.data.trim() === '') {
               htmlContent += '<p>No data found</p>';
@@ -173,7 +196,7 @@
               }
               htmlContent += response.data;
             }
-            $('#data-display').html(htmlContent); // Display fetched data with titles
+            $('#data-display').html(htmlContent);
           },
           error: function(err) {
             console.error('Error:', err);
