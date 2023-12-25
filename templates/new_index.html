@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Student Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <style>
     body {
@@ -27,24 +28,7 @@
       color: #333;
     }
 
-    .options {
-      display: none;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      color: #333;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
+    /* Button Styling */
     button {
       padding: 10px 20px;
       margin: 5px;
@@ -53,37 +37,43 @@
       cursor: pointer;
       background-color: #4285f4;
       color: #fff;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.3s;
+      font-size: 16px;
     }
 
     button:hover {
       background-color: #357ae8;
+      transform: scale(1.05);
     }
 
-    #datepicker {
-      width: 200px;
-      padding: 8px;
-      margin-top: 10px;
+    .class11 {
+      background-color: #4caf50;
     }
 
-    #data-display {
-      margin-top: 20px;
+    .class12 {
+      background-color: #f44336;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    /* Your existing styles here */
 
-    th,
-    td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #f2f2f2;
+    /* Media Query for Mobile Devices */
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      input[type="text"] {
+        width: calc(100% - 20px);
+      }
+      button {
+        width: calc(50% - 10px);
+        margin: 5px 0;
+      }
+      #datepicker {
+        width: calc(100% - 20px);
+      }
     }
   </style>
 </head>
